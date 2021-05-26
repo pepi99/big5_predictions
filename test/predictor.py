@@ -1,8 +1,10 @@
 import xgboost as xgb
 import numpy as np
-from sklearn.model_selection import cross_val_score
-from sklearn.model_selection import RepeatedKFold
 from sklearn.metrics import mean_squared_error
+from sklearn.model_selection import train_test_split
+import sys
+
+np.set_printoptions(threshold=sys.maxsize)
 
 
 def error_function(x1, x2):
@@ -13,23 +15,32 @@ def error_function(x1, x2):
     return error
 
 
-X = np.loadtxt('../input_data/X.txt')
-y = np.loadtxt('../input_data/Y.txt')
+def N_distance(x1, x2, N):
+    distance = 0
+    for v1, v2 in zip(x1, x2):
+        if abs(v1 - v2) <= N:
+            distance += 1
+    return distance
 
-y = y[:, 0]
 
-print(X.shape)
-print(y.shape)
+X = np.loadtxt('../input_data/X_full.txt')
+y = np.loadtxt('../input_data/Y_full.txt')
+y = y[:, 1]  # Take first feature only
+
+X_train, X_validate, y_train, y_validate = train_test_split(X, y, test_size=0.1, random_state=1)
+
+print(X_train.shape)
+print(y_train.shape)
+print(X_validate.shape)
+print(y_validate.shape)
+
 model = xgb.XGBRegressor()
-model.fit(X[:9000], y[:9000])
-yhat = model.predict(X[9000:])
+model.fit(X_train, y_train)
 
-error = error_function(y[9000:], yhat)
-print('Error is: ', error)
-# print(yhat)
-# print(yhat)
-# cv = RepeatedKFold(n_splits=10, n_repeats=3, random_state=1)
-# scores = cross_val_score(model, X, y, scoring='neg_mean_absolute_error', cv=cv, n_jobs=-1)
-# scores = np.absolute(scores)
-# print('Mean MAE: %.3f (%.3f)' % (scores.mean(), scores.std()))
-# yhat = model.
+yhat = model.predict(X_validate)
+yhat = np.rint(yhat) # Round
+
+# error = mean_squared_error(y_validate, yhat, squared=False)
+distance = N_distance(y_validate, yhat, 10)
+print('N distance for N=10 is: ', distance)
+print('Size of validation set: ', y_validate.shape)
