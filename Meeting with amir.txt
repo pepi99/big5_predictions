@@ -1,0 +1,33 @@
+1. Probably use tf idf
+
+2. Other libraries:
+- Light GBM (put all y values)
+- catboost
+
+3. Add another approach (another vectorizer, maybe tf idf)
+- We need a model that we can fine tune parameters.
+
+
+- BPE encoding
+- Fast text
+- Glove (averaged, becasue it encodes words)
+Try different encodings
+
+4.
+Scientific mode
+run separate cells like that
+
+#%%
+a = 2
+print(a)
+#%%
+
+
+5.
+Threshold
+
+6.
+
+7.
+
+8.
