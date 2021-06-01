@@ -3,6 +3,8 @@ from sklearn.datasets import make_regression
 from sklearn.model_selection import RepeatedKFold
 from keras.models import Sequential
 from keras.layers import Dense
+import keras
+from keras import callbacks
 
 import tensorflow as tf
 
@@ -14,15 +16,22 @@ class NeuralNetMulti(Regressor):
     def __init__(self):
         self.name = 'keras-sequential'
         self.model = Sequential()
+        # self.earlystopping = callbacks.EarlyStopping(monitor="mae",
+        #                                              mode="min", patience=5,
+        #                                              restore_best_weights=True)
 
     def fit(self, X, y):
         print('Fitting into the neural net...')
         n_inputs = X.shape[1]
         n_outputs = y.shape[1]
-        self.model.add(Dense(20, input_dim=n_inputs, kernel_initializer='he_uniform', activation='relu'))
+        self.model.add(Dense(30, input_dim=n_inputs, kernel_initializer='he_uniform', activation='relu'))
+        self.model.add(Dense(20, activation='relu'))
+        self.model.add(Dense(10, activation='relu'))
         self.model.add(Dense(n_outputs))
-        self.model.compile(loss='mae', optimizer='adam')
-        self.model.fit(X, y, verbose=0, epochs=10000)
+        self.model.summary()
+        self.model.compile(loss='mae', optimizer='adam', metrics=['mse', 'mae'])
+        self.model.fit(X, y, verbose=1, epochs=1000)
+        # self.model.fit(X, y, verbose=1, epochs=1000, callbacks=[self.earlystopping])
         print('Fitting completed!')
 
     def predict(self, X):
@@ -32,12 +41,14 @@ class NeuralNetMulti(Regressor):
         return predictions
 
     def save(self, path):
-        print('Saving not implemented...')
-        pass
+        print('Saving model to ', path, '...')
+        self.model.save(path)
+        print('Model saved')
 
     def load(self, path):
-        print('Loading not implemented...')
-        pass
+        print('Loading model...')
+        model = keras.models.load_model(path)
+        print('Model loaded!')
 
     # def get_dataset(self):
     #     X, y = make_regression(n_samples=1000, n_features=10, n_informative=5, n_targets=3, random_state=2)

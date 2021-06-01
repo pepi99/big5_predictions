@@ -7,6 +7,7 @@ from models.tfidf_model import TfidfModel
 from models.scores import rmse
 from models.scores import N_distance
 
+
 from sklearn.model_selection import train_test_split
 import numpy as np
 
@@ -34,7 +35,7 @@ def main():
 
     base_model = Basepipeline(TfidfModel, NeuralNetMulti)
     base_model.fit(X_train, y_train)
-    # base_model.save('../cache/tfidf_pca_500/')
+    base_model.save('../cache/tfidf_pca_nn_full/')
     y_pred = base_model.predict(X_test)
 
     ndist = N_distance(y_test, y_pred, 10)

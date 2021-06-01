@@ -19,7 +19,7 @@ class TfidfModel(Embedder, ABC):
     def __init__(self):
         self.name = ''
         self.model = TfidfVectorizer(lowercase=True, max_features=50000)
-        self.pca = PCA(n_components=200)
+        self.pca = PCA(n_components=100)
 
     def fit(self, X):
         print('Fitting the tfidf vectorizer...')
