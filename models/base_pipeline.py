@@ -1,5 +1,6 @@
 import os
 from typing import List
+import numpy as np
 
 
 class Basepipeline:
@@ -8,8 +9,8 @@ class Basepipeline:
         self.regressor = Regressor()
 
     def fit(self, X: List[str], y: List[float]):
-        self.embedder.fit(X)
-        X_emb = self.embedder.encode(X)
+        X_emb = self.embedder.fit(X)
+        #4 X_emb = self.embedder.encode(X)
         self.regressor.fit(X_emb, y)
 
     def predict(self, X: List[str]):

@@ -31,3 +31,27 @@ Threshold
 7.
 
 8.
+
+
+
+
+
+Meeting with amir 2:
+
+regression model based on pretrained embeddings
+
+Encode text:
+tf idf
+bm25
+----------------
+
+tf idf - basic word encoding - 1 x 10000 vectors (for each word), then reduce the dimension
+and show the clusters
+
+Tasks for today
+1.
+2. Apply tf idf with PCA (dimensionality reduction) and see accuracy
+3. Architecture of project
+
+Also change format ()
+Also use binary format maybe

@@ -1,6 +1,6 @@
 import xgboost as xgb
 import numpy as np
-from sklearn.metrics import mean_squared_error
+from sklearn.metrics import mean_squared_error as MSE
 from sklearn.model_selection import train_test_split
 import sys
 
@@ -38,9 +38,10 @@ model = xgb.XGBRegressor()
 model.fit(X_train, y_train)
 
 yhat = model.predict(X_validate)
-yhat = np.rint(yhat) # Round
+yhat = np.rint(yhat)  # Round
 
-# error = mean_squared_error(y_validate, yhat, squared=False)
+error = MSE(y_validate, yhat, squared=False)
 distance = N_distance(y_validate, yhat, 10)
 print('N distance for N=10 is: ', distance)
 print('Size of validation set: ', y_validate.shape)
+print('Error is: ', error)

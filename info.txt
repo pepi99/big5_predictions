@@ -40,3 +40,8 @@ https://medium.com/@brn.pistone/bert-fine-tuning-for-tensorflow-2-0-with-keras-a
 https://machinelearningmastery.com/xgboost-for-regression/ -> xgboost
 
 https://huggingface.co/transformers/preprocessing.html - truncation thing
+
+https://stackoverflow.com/questions/29788047/keep-tfidf-result-for-predicting-new-content-using-scikit-for-python tf-idf
+
+PCA: https://ittutorial.org/python-unsupervised-learning-6/
+

@@ -6,7 +6,7 @@ from models.regressor import Regressor
 class CatboostRegr(Regressor):
     def __init__(self, *args, **kwargs):
         self.name = 'catboost'
-        self.model = catboost.CatBoostRegressor(*args, **kwargs, objective='MultiRMSE')
+        self.model = catboost.CatBoostRegressor(*args, **kwargs, objective='MultiRMSE', iterations=2000)
 
     def fit(self, X, y):
         self.model.fit(X, y)
