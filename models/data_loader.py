@@ -1,13 +1,17 @@
 import pandas as pd
 import re
+from models.db_connector import Connector
 
 
 class DataLoader:
     def __init__(self, input_file):
         self.input_file = input_file
+        self.connector = Connector()
 
     def parse_input(self):
-        df = pd.read_csv(self.input_file)
+        # df = pd.read_csv(self.input_file)
+        db_query = '''SELECT big5_openness, big5_conscientiousness, big5_extraversion, big5_agreeableness, big5_neuroticism, input_text  FROM data_personality_analiser_nlp where input_text IS NOT NULL and input_text <> '' LIMIT 500 '''
+        df = self.connector.query(db_query)
         y = df[['big5_openness', 'big5_conscientiousness', 'big5_extraversion', 'big5_agreeableness',
                 'big5_neuroticism']].to_numpy()
 

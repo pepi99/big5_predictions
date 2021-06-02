@@ -35,7 +35,7 @@ def main():
 
     base_model = Basepipeline(TfidfModel, NeuralNetMulti)
     base_model.fit(X_train, y_train)
-    base_model.save('../cache/tfidf_pca_nn_full/')
+    # base_model.save('../cache/tfidf_pca_nn_full/')
     y_pred = base_model.predict(X_test)
 
     ndist = N_distance(y_test, y_pred, 10)

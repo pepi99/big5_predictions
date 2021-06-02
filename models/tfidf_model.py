@@ -6,9 +6,8 @@ from nltk.stem.porter import PorterStemmer
 import numpy as np
 from models.embedder import Embedder
 import pickle
-
-
-# nltk.download('punkt')
+# from nltk import download
+# download('punkt')
 
 
 class TfidfModel(Embedder, ABC):
