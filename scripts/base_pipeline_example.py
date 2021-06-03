@@ -13,25 +13,10 @@ import numpy as np
 
 
 def main():
-    X = ['abc', 'abcd.', 'abcd efgh', 'abcd', 'das dsakd askoda', 'dsasda ', 'ndas Hey how are you today',
-         'bte Yesterday I went to the shopping center and didnt buy anything', 'hey',
-         'hey? This text is really raelly loon haha I am cool veyr coool nice']
-
-    y = np.array([[10, 20, 30, 40, 50],
-                  [10, 22, 31, 40, 41],
-                  [90, 93, 95, 91, 98],
-                  [99, 100, 45, 11, 37],
-                  [10, 20, 30, 40, 50],
-                  [10, 20, 30, 40, 50],
-                  [10, 20, 30, 40, 50],
-                  [10, 20, 30, 40, 50],
-                  [10, 20, 30, 40, 50],
-                  [10, 20, 30, 40, 50],
-                  ])
-    dl = DataLoader('../data/twitter_data.csv')
+    dl = DataLoader()
 
     X, y = dl.parse_input()
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=1)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=1)
 
     base_model = Basepipeline(TfidfModel, NeuralNetMulti)
     base_model.fit(X_train, y_train)
