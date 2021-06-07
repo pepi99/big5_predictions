@@ -23,5 +23,7 @@ class Connector:
     def query(self, db_query):
         print('Quierying database...')
         df = pd.read_sql_query(db_query, self.connection)
+        # df = pd.read_csv('../data/big5_data_en.csv')
+        print(df.shape)
         print('Database queried!')
         return df

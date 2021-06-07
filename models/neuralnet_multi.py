@@ -26,11 +26,12 @@ class NeuralNetMulti(Regressor):
         n_outputs = y.shape[1]
         self.model.add(Dense(30, input_dim=n_inputs, kernel_initializer='he_uniform', activation='relu'))
         self.model.add(Dense(20, activation='relu'))
+        self.model.add(Dense(20, activation='relu'))
         self.model.add(Dense(10, activation='relu'))
         self.model.add(Dense(n_outputs))
         self.model.summary()
         self.model.compile(loss='mae', optimizer='adam', metrics=['mse', 'mae'])
-        self.model.fit(X, y, verbose=1, epochs=1000)
+        self.model.fit(X, y, verbose=1, epochs=1500)
         # self.model.fit(X, y, verbose=1, epochs=1000, callbacks=[self.earlystopping])
         print('Fitting completed!')
 
