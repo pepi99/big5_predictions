@@ -21,3 +21,6 @@ class Basepipeline:
         os.makedirs(odir, exist_ok=True)
         self.embedder.save(f'{odir}/{self.embedder.name}')
         self.regressor.save(f'{odir}/{self.regressor.name}')
+    def load(self, odir):
+        self.embedder.load(odir)
+        self.regressor.load(odir)

@@ -1,12 +1,16 @@
-from models.base_pipeline import Basepipeline
-from models.bert_model import BertModel
-from models.catboost_regr import CatboostRegr
-from models.neuralnet_multi import NeuralNetMulti
-from models.data_loader import DataLoader
-from models.tfidf_model import TfidfModel
-from models.scores import rmse
-from models.scores import N_distance
-
+import sys
+sys.path.append('../models')
+from base_pipeline import Basepipeline
+from bert_model import BertModel
+from catboost_regr import CatboostRegr
+from neuralnet_multi import NeuralNetMulti
+from data_loader import DataLoader
+from tfidf_model import TfidfModel
+from scores import rmse
+from scores import N_distance
+from scores import percentage
+from scores import idxs
+from scores import average_words
 
 from sklearn.model_selection import train_test_split
 import numpy as np
@@ -20,15 +24,24 @@ def main():
 
     base_model = Basepipeline(TfidfModel, NeuralNetMulti)
     base_model.fit(X_train, y_train)
-    base_model.save('../cache/tfidf_pca_nn_full/')
+    #base_model.save('../cache/tfidf_pca_nn_full__en/')
+    #base_model.load('../cache/tfidf_pca_nn_full')
     y_pred = base_model.predict(X_test)
 
-    ndist = N_distance(y_test, y_pred, 10)
+    ten_dist = N_distance(y_test, y_pred, 10)
+    five_dist = N_distance(y_test, y_pred, 5)
     _rmse = rmse(y_test, y_pred)
+    indices = idxs(y_test, y_pred, 10)
+    all_indices = [j for j in range(0, len(X_test))]
     print('Results: ')
     print('Shape of prediction set size: ', y_test.shape)
-    print('10_distance: ', ndist)
+    print('10_distance: ', ten_dist)
+    print('10_distance%: ', percentage(ten_dist, y_test.shape[0]))
+    print('5_distance: ', five_dist)
+    print('5_distance%: ', percentage(five_dist, y_test.shape[0]))
     print('rmse: ', _rmse)
+    print('average words in error: ', average_words(X_test, indices))
+    print('Average words in correctly classified texts: ', average_words(X_test, list(set(all_indices) - set(indices))))
 
 
 if __name__ == '__main__':

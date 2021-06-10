@@ -1,10 +1,10 @@
-from models.regressor import Regressor
+from regressor import Regressor
 from sklearn.datasets import make_regression
 from sklearn.model_selection import RepeatedKFold
-from keras.models import Sequential
-from keras.layers import Dense
-import keras
-from keras import callbacks
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense
+import tensorflow.keras
+from tensorflow.keras import callbacks
 
 import tensorflow as tf
 
@@ -24,20 +24,20 @@ class NeuralNetMulti(Regressor):
         print('Fitting into the neural net...')
         n_inputs = X.shape[1]
         n_outputs = y.shape[1]
-        self.model.add(Dense(30, input_dim=n_inputs, kernel_initializer='he_uniform', activation='relu'))
+        self.model.add(Dense(252, input_dim=n_inputs, kernel_initializer='he_uniform', activation='relu'))
+        self.model.add(Dense(100, activation='relu'))
+        self.model.add(Dense(50, activation='relu'))
         self.model.add(Dense(20, activation='relu'))
-        self.model.add(Dense(20, activation='relu'))
-        self.model.add(Dense(10, activation='relu'))
         self.model.add(Dense(n_outputs))
         self.model.summary()
         self.model.compile(loss='mae', optimizer='adam', metrics=['mse', 'mae'])
-        self.model.fit(X, y, verbose=1, epochs=1500)
+        self.model.fit(X, y, verbose=1, epochs=500)
         # self.model.fit(X, y, verbose=1, epochs=1000, callbacks=[self.earlystopping])
         print('Fitting completed!')
 
     def predict(self, X):
         print('Predicting...')
-        predictions = self.model.predict(X)
+        predictions = self.model.predict(X, verbose=1)
         print('Predicted!')
         return predictions
 
@@ -47,9 +47,9 @@ class NeuralNetMulti(Regressor):
         print('Model saved')
 
     def load(self, path):
-        print('Loading model...')
-        model = keras.models.load_model(path)
-        print('Model loaded!')
+        print('Loading NN  model...')
+        self.model = tf.keras.models.load_model(path + '/keras-sequential')
+        print('NN Model loaded!')
 
     # def get_dataset(self):
     #     X, y = make_regression(n_samples=1000, n_features=10, n_informative=5, n_targets=3, random_state=2)

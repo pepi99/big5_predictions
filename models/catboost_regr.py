@@ -1,6 +1,6 @@
 import catboost
 
-from models.regressor import Regressor
+from regressor import Regressor
 
 
 class CatboostRegr(Regressor):
