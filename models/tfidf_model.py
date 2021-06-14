@@ -1,5 +1,6 @@
 from abc import ABC
 from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.decomposition import PCA
 from nltk import word_tokenize
 from nltk.stem.porter import PorterStemmer
@@ -19,15 +20,15 @@ class TfidfModel(Embedder, ABC):
 
     def __init__(self):
         self.name = ''
-        self.model = TfidfVectorizer(lowercase=True, max_features=15000)
-        self.pca = PCA(n_components=130)
+        self.model = TfidfVectorizer(lowercase=True, max_features=5000)
+        self.pca = PCA(n_components=700)
 
     def fit(self, X):
-        print('Tokenizing training data...')
-        tokenized_text = self.tokenize_text(X)
-        print('Tokenizing training data finished!')
+        #print('Tokenizing training data...')
+        #tokenized_text = self.tokenize_text(X)
+        #print('Tokenizing training data finished!')
         print('Fitting the tfidf vectorizer...')
-        matrix = self.model.fit_transform(tokenized_text).todense()
+        matrix = self.model.fit_transform(X).todense()
         print('Fitting the tfidf vectorizer finished!')
         matrix = np.squeeze(np.asarray(matrix))
         print('Dimension of original tfidf matrix: ', matrix.shape)
@@ -41,11 +42,11 @@ class TfidfModel(Embedder, ABC):
         return reduced_matrix
 
     def encode(self, X):
-        print('Tokenizing test data...')
-        tokenized_text = self.tokenize_text(X)
-        print('Tokenizing test data finished!')
+        #print('Tokenizing test data...')
+        #tokenized_text = self.tokenize_text(X)
+        #print('Tokenizing test data finished!')
         print('TfIdf transforming test data...')
-        matrix = self.model.transform(tokenized_text).todense()
+        matrix = self.model.transform(X).todense()
         print('TfIdf transform finished!')
         matrix = np.squeeze(np.asarray(matrix))
         print('PCA transforming test data...')
@@ -65,18 +66,3 @@ class TfidfModel(Embedder, ABC):
         pickle.dump(self.model, open(odir + 'tfidf_vectorizer', 'wb'))  # Save tfidf vectorizer
         pickle.dump(self.pca, open(odir + 'pca_model', 'wb'))  # Save the PCA model
         print('Model saved!')
-
-    def tokenize_item(self, item):
-        #tokens = text_to_word_sequence(item)
-        tokens = word_tokenize(item)
-        stems = []
-        for token in tokens:
-            stems.append(PorterStemmer().stem(token))
-        return stems
-
-    def tokenize_text(self, text):
-        res = []
-        for txt in tqdm(text):
-            res.append(' '.join(self.tokenize_item(txt.lower())))
-        return res
-        #return [' '.join(self.tokenize_item(txt.lower())) for txt in text]

@@ -52,4 +52,14 @@ def average_words(texts, indices):
         av += len(texts[i].split())
     av /= len(indices)
     return av
+def lengths(X):
+    d = {100: 0, 1000: 0, 5000: 0, 10000: 0, 20000: 0}
+    for text in X:
+        l = len(text.split())
+        for k in d.keys():
+            if l >= k:
+                d[k] += 1
+            else:
+                break
+    return d
 

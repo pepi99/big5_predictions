@@ -3,6 +3,7 @@ from sklearn.datasets import make_regression
 from sklearn.model_selection import RepeatedKFold
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense
+from tensorflow.keras.layers import LSTM
 import tensorflow.keras
 from tensorflow.keras import callbacks
 
@@ -24,14 +25,14 @@ class NeuralNetMulti(Regressor):
         print('Fitting into the neural net...')
         n_inputs = X.shape[1]
         n_outputs = y.shape[1]
-        self.model.add(Dense(252, input_dim=n_inputs, kernel_initializer='he_uniform', activation='relu'))
-        self.model.add(Dense(100, activation='relu'))
-        self.model.add(Dense(50, activation='relu'))
-        self.model.add(Dense(20, activation='relu'))
+        self.model.add(Dense(256, input_dim=n_inputs, kernel_initializer='he_uniform', activation='relu'))
+        #self.model.add(Dense(100, activation='relu'))
+        #self.model.add(Dense(128, activation='relu'))
+        self.model.add(Dense(128, activation='relu'))
         self.model.add(Dense(n_outputs))
         self.model.summary()
         self.model.compile(loss='mae', optimizer='adam', metrics=['mse', 'mae'])
-        self.model.fit(X, y, verbose=1, epochs=500)
+        self.model.fit(X, y, verbose=1, epochs=450)
         # self.model.fit(X, y, verbose=1, epochs=1000, callbacks=[self.earlystopping])
         print('Fitting completed!')
 

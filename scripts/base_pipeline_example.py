@@ -11,6 +11,7 @@ from scores import N_distance
 from scores import percentage
 from scores import idxs
 from scores import average_words
+from scores import lengths
 
 from sklearn.model_selection import train_test_split
 import numpy as np
@@ -20,11 +21,12 @@ def main():
     dl = DataLoader()
 
     X, y = dl.parse_input()
+    print('Lengths are: ', lengths(X))
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=1)
 
     base_model = Basepipeline(TfidfModel, NeuralNetMulti)
     base_model.fit(X_train, y_train)
-    #base_model.save('../cache/tfidf_pca_nn_full__en/')
+    #base_model.save('../cache/tfidf_pca_nn_full_en/')
     #base_model.load('../cache/tfidf_pca_nn_full')
     y_pred = base_model.predict(X_test)
 
