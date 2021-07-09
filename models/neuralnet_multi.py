@@ -6,8 +6,9 @@ from tensorflow.keras.layers import Dense
 from tensorflow.keras.layers import LSTM
 import tensorflow.keras
 from tensorflow.keras import callbacks
-
+from losses import huber_loss
 import tensorflow as tf
+import matplotlib.pyplot as plt
 
 print(tf.__version__)
 print(tf.config.list_physical_devices())
@@ -25,15 +26,32 @@ class NeuralNetMulti(Regressor):
         print('Fitting into the neural net...')
         n_inputs = X.shape[1]
         n_outputs = y.shape[1]
-        self.model.add(Dense(256, input_dim=n_inputs, kernel_initializer='he_uniform', activation='relu'))
-        #self.model.add(Dense(100, activation='relu'))
-        #self.model.add(Dense(128, activation='relu'))
+        self.model.add(Dense(1024, input_dim=n_inputs, kernel_initializer='he_uniform', activation='relu'))
+        self.model.add(Dense(512, activation='relu'))
+        self.model.add(Dense(256, activation='relu'))
         self.model.add(Dense(128, activation='relu'))
-        self.model.add(Dense(n_outputs))
+        self.model.add(Dense(n_outputs, activation='sigmoid'))
         self.model.summary()
-        self.model.compile(loss='mae', optimizer='adam', metrics=['mse', 'mae'])
-        self.model.fit(X, y, verbose=1, epochs=450)
+        self.model.compile(loss='mse', optimizer='adam', metrics=['mse', 'mae'])
+        history = self.model.fit(X, y, verbose=1, epochs=100, validation_split=0.1)
         # self.model.fit(X, y, verbose=1, epochs=1000, callbacks=[self.earlystopping])
+        # MSE
+        plt.plot(history.history['mse'])
+        plt.plot(history.history['val_mse'])
+        plt.title('model MSE')
+        plt.ylabel('MSE')
+        plt.xlabel('epoch')
+        plt.legend(['train', 'test'], loc='upper left')
+        plt.savefig('../visualization/v1.png')
+        plt.close()
+        # summarize history for loss
+        plt.plot(history.history['mae'])
+        plt.plot(history.history['val_mae'])
+        plt.title('model MAE')
+        plt.ylabel('MAE')
+        plt.xlabel('epoch')
+        plt.legend(['train', 'test'], loc='upper left')
+        plt.savefig('../visualization/v2.png')
         print('Fitting completed!')
 
     def predict(self, X):

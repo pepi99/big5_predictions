@@ -1,4 +1,6 @@
 from sklearn.metrics import mean_squared_error
+from tensorflow.keras import backend as K
+import tensorflow as tf
 
 
 def N_distance(y_true, y_pred, N):
@@ -8,8 +10,11 @@ def N_distance(y_true, y_pred, N):
     :param y_pred:
     :return:
     """
+    y_r = tf.cast(K.round(y_true), dtype=tf.int64)
+    ypred_r = tf.cast(K.round(y_pred), dtype=tf.int64)
+
     score = 0
-    for y_i, yhat_i in zip(y_true, y_pred):
+    for y_i, yhat_i in zip(y_r, ypred_r):
         vals = abs(y_i - yhat_i)
         if all(a <= N for a in vals):
             score += 1

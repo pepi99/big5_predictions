@@ -11,10 +11,16 @@ class BertModel(Embedder, ABC):
         self.model = SentenceTransformer('bert-base-nli-mean-tokens')
 
     def encode(self, X):
-        return self.model.encode(X)
+        print('Encoding with Bert...')
+        encoding = self.model.encode(X)
+        print('Encoding with bert finished!')
+        return encoding
 
     def fit(self, X):
-        pass
+        print('Encoding with Bert...')
+        encoding = self.encode(X)
+        print('Encoding with bert finished!')
+        return encoding
 
     def load(self, path):
         pass

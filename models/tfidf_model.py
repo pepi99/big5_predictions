@@ -20,8 +20,8 @@ class TfidfModel(Embedder, ABC):
 
     def __init__(self):
         self.name = ''
-        self.model = TfidfVectorizer(lowercase=True, max_features=5000)
-        self.pca = PCA(n_components=700)
+        self.model = TfidfVectorizer(lowercase=True, max_features=20000)
+        self.pca = PCA(n_components=9000)
 
     def fit(self, X):
         #print('Tokenizing training data...')
