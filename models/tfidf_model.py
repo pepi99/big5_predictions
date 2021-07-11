@@ -5,7 +5,7 @@ from sklearn.decomposition import PCA
 from nltk import word_tokenize
 from nltk.stem.porter import PorterStemmer
 import numpy as np
-from embedder import Embedder
+from .embedder import Embedder
 import pickle
 from tqdm import tqdm
 from tensorflow.keras.preprocessing.text import text_to_word_sequence
@@ -21,7 +21,7 @@ class TfidfModel(Embedder, ABC):
     def __init__(self):
         self.name = ''
         self.model = TfidfVectorizer(lowercase=True, max_features=20000)
-        self.pca = PCA(n_components=9000)
+        self.pca = PCA(n_components=900)
 
     def fit(self, X):
         #print('Tokenizing training data...')

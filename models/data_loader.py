@@ -1,6 +1,6 @@
 import pandas as pd
 import re
-from db_connector import Connector
+from .db_connector import Connector
 from langdetect import detect
 from tqdm import tqdm
 from nltk import word_tokenize
@@ -8,9 +8,13 @@ from nltk.stem import PorterStemmer
 import matplotlib.pyplot as plt
 
 tqdm.pandas()
+
+
 class DataLoader:
     def __init__(self):
+        pass
         self.connector = Connector()
+
     def detect_bad(self, text):
         lan = None
         try:
@@ -20,7 +24,7 @@ class DataLoader:
             print('Found a bad text...')
         return lan
 
-    def parse_input(self):
+    def parse_input(self, path):
         #db_query = '''SELECT big5_openness, big5_conscientiousness, big5_extraversion, big5_agreeableness, big5_neuroticism, input_text  FROM data_personality_analiser_nlp where input_text IS NOT NULL and input_text <> '' '''
         #df = self.connector.query(db_query)
         #print('Shape of non-filtered df: ', df.shape)
@@ -32,7 +36,7 @@ class DataLoader:
         #print('Shape of the DF: ', df.shape)
         #df.to_csv('../data/4K_5K_full_en.csv')
         #print('df saved!')
-        df = pd.read_csv('../data/300_inf_full_en.csv')
+        df = pd.read_csv(path)
         print('Shape of the read df is: ', df.shape)
         df['input_text'] = df['input_text'].str.lower()
         df['input_text'] = df['input_text'].apply(lambda x: re.sub(r'https?:\/\/\S+', '', x))

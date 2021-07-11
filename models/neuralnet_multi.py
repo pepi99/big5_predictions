@@ -1,4 +1,4 @@
-from regressor import Regressor
+from .regressor import Regressor
 from sklearn.datasets import make_regression
 from sklearn.model_selection import RepeatedKFold
 from tensorflow.keras.models import Sequential
@@ -6,7 +6,7 @@ from tensorflow.keras.layers import Dense
 from tensorflow.keras.layers import LSTM
 import tensorflow.keras
 from tensorflow.keras import callbacks
-from losses import huber_loss
+from .losses import huber_loss
 import tensorflow as tf
 import matplotlib.pyplot as plt
 
@@ -42,7 +42,7 @@ class NeuralNetMulti(Regressor):
         plt.ylabel('MSE')
         plt.xlabel('epoch')
         plt.legend(['train', 'test'], loc='upper left')
-        plt.savefig('../visualization/v1.png')
+        plt.savefig('visualization/v1.png')
         plt.close()
         # summarize history for loss
         plt.plot(history.history['mae'])
@@ -51,7 +51,7 @@ class NeuralNetMulti(Regressor):
         plt.ylabel('MAE')
         plt.xlabel('epoch')
         plt.legend(['train', 'test'], loc='upper left')
-        plt.savefig('../visualization/v2.png')
+        plt.savefig('visualization/v2.png')
         print('Fitting completed!')
 
     def predict(self, X):

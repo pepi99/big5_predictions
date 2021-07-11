@@ -1,5 +1,5 @@
 import re
-from db_connector import Connector
+from .db_connector import Connector
 from langdetect import detect
 from nltk.stem import WordNetLemmatizer, PorterStemmer
 from tqdm import tqdm
