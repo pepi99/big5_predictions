@@ -23,14 +23,14 @@ import numpy as np
 def main(args):
     dl = DataLoader()
     print('Loading data...')
-    X, y = dl.parse_input(args.data_path)
+    X, y = dl.parse_input(args.data_path, clean_text=args.clean_text)
     print('Lengths are: ', lengths(X))
     print(X.shape)
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1, random_state=1)
     y_train = y_train / 100
 
-    base_model = BasePipeline(TfidfModel, NeuralNetMulti)
+    base_model = BasePipeline(TfidfModel(args.use_bpe), NeuralNetMulti())
 
     if args.train:
         base_model.fit(X_train, y_train)

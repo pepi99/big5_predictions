@@ -24,7 +24,7 @@ class DataLoader:
             print('Found a bad text...')
         return lan
 
-    def parse_input(self, path):
+    def parse_input(self, path, clean_text=True):
         #db_query = '''SELECT big5_openness, big5_conscientiousness, big5_extraversion, big5_agreeableness, big5_neuroticism, input_text  FROM data_personality_analiser_nlp where input_text IS NOT NULL and input_text <> '' '''
         #df = self.connector.query(db_query)
         #print('Shape of non-filtered df: ', df.shape)
@@ -39,33 +39,40 @@ class DataLoader:
         df = pd.read_csv(path)
         print('Shape of the read df is: ', df.shape)
         df['input_text'] = df['input_text'].str.lower()
-        df['input_text'] = df['input_text'].apply(lambda x: re.sub(r'https?:\/\/\S+', '', x))
-        df['input_text'] = df['input_text'].apply(lambda x: re.sub(r"www\.[a-z]?\.?(com)+|[a-z]+\.(com)", '', x))
-        df['input_text'] = df['input_text'].apply(lambda x: re.sub(r'{link}', '', x))
-        df['input_text'] = df['input_text'].apply(lambda x: re.sub(r"\[video\]", '', x))
-        df['input_text'] = df['input_text'].apply(lambda x: re.sub(r'&[a-z]+;', '', x))
-        df['input_text'] = df['input_text'].apply(lambda x: re.sub(r"[^a-z\s\(\-:\)\\\/\];='#]", '', x))
-        df['input_text'] = df['input_text'].apply(lambda x: re.sub(r'@mention', '', x))
+
+        if clean_text:
+            df['input_text'] = df['input_text'].apply(lambda x: re.sub(r'https?:\/\/\S+', '', x))
+            df['input_text'] = df['input_text'].apply(lambda x: re.sub(r"www\.[a-z]?\.?(com)+|[a-z]+\.(com)", '', x))
+            df['input_text'] = df['input_text'].apply(lambda x: re.sub(r'{link}', '', x))
+            df['input_text'] = df['input_text'].apply(lambda x: re.sub(r"\[video\]", '', x))
+            df['input_text'] = df['input_text'].apply(lambda x: re.sub(r'&[a-z]+;', '', x))
+            df['input_text'] = df['input_text'].apply(lambda x: re.sub(r"[^a-z\s\(\-:\)\\\/\];='#]", '', x))
+            df['input_text'] = df['input_text'].apply(lambda x: re.sub(r'@mention', '', x))
+
         y = df[['big5_openness', 'big5_conscientiousness', 'big5_extraversion', 'big5_agreeableness',
                 'big5_neuroticism']].to_numpy()
-
 
         input_texts = df[['input_text']].astype(str).to_numpy()
         X = input_texts.flatten()
         #X = [re.sub(r'http\S+', '', text[0]) for text in input_texts]  # remove links
         #X = self.tokenize_text(X)
         return X, y
-    def tokenize_item(self, item):
+
+    @staticmethod
+    def tokenize_item(item):
         tokens = word_tokenize(item)
         stems = []
         for token in tokens:
             stems.append(PorterStemmer().stem(token))
         return stems
+
     def tokenize_text(self, text):
         res = []
         for txt in tqdm(text):
             res.append(' '.join(self.tokenize_item(txt.lower())))
+
         return res
+
     def count_words(self):
         #db_query = '''SELECT big5_openness, big5_conscientiousness, big5_extraversion, big5_agreeableness, big5_neuroticism, input_text  FROM data_personality_analiser_nlp where input_text IS NOT NULL and input_text <> '' '''
         #df = self.connector.query(db_query)
@@ -96,6 +103,7 @@ class DataLoader:
         d['35000-50000'] = f10
         d['50000-100000'] = f11
         print('Lengths are : ', d)
+
     def plot_distribution(self):
         #db_query = '''SELECT big5_openness, big5_conscientiousness, big5_extraversion, big5_agreeableness, big5_neuroticism, input_text  FROM data_personality_analiser_nlp where input_text IS NOT NULL and input_text <> '' LIMIT 10000 '''
         #df = self.connector.query(db_query)
@@ -108,7 +116,3 @@ class DataLoader:
         plt.hist(lengths, color='blue', bins=100, edgecolor='black')
         plt.savefig('../visualization/word_distribution.png')
         #plt.show()
-
-#d = DataLoader()
-#rint(d.count_words())
-#d.plot_distribution()

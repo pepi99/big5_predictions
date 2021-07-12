@@ -4,9 +4,9 @@ import numpy as np
 
 
 class BasePipeline:
-    def __init__(self, Embedder, Regressor):
-        self.embedder = Embedder()
-        self.regressor = Regressor()
+    def __init__(self, embedder, regressor):
+        self.embedder = embedder
+        self.regressor = regressor
 
     def fit(self, X: List[str], y: List[float]):
         X_emb = self.embedder.fit(X)

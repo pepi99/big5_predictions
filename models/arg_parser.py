@@ -24,4 +24,15 @@ def create_parser():
         help='Train model from scratch.'
     )
 
+    parser.add_argument(
+        '--use_bpe',
+        action='store_true',
+        help='Use BPE before the tf idf.'
+    )
+
+    parser.add_argument(
+        '--clean_text',
+        action='store_true',
+        help='Remove links, mentions etc before training.'
+    )
     return parser
