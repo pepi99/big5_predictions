@@ -1,6 +1,5 @@
 import pandas as pd
 import re
-from .db_connector import Connector
 from langdetect import detect
 from tqdm import tqdm
 from nltk import word_tokenize
@@ -12,8 +11,7 @@ tqdm.pandas()
 
 class DataLoader:
     def __init__(self):
-        pass
-        self.connector = Connector()
+        self.connector = None
 
     def detect_bad(self, text):
         lan = None

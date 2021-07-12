@@ -1,5 +1,4 @@
 import re
-from .db_connector import Connector
 from langdetect import detect
 from nltk.stem import WordNetLemmatizer, PorterStemmer
 from tqdm import tqdm
@@ -10,7 +9,7 @@ tqdm.pandas()
 
 class DataLoader:
     def __init__(self):
-        self.connector = Connector()
+        self.connector = None
 
     def parse_input(self):
         db_query = '''SELECT big5_openness, big5_conscientiousness, big5_extraversion, big5_agreeableness, big5_neuroticism, input_text  FROM data_personality_analiser_nlp where input_text IS NOT NULL and input_text <> '' LIMIT 500 '''
