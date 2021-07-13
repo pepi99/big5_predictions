@@ -19,7 +19,7 @@ from models.scores import lengths
 from sklearn.model_selection import train_test_split
 import numpy as np
 
-
+# python3 base_pipeline_example.py --train --use_bpe --data_path data/300_inf_full_en.csv
 def main(args):
     dl = DataLoader()
     print('Loading data...')
@@ -39,7 +39,7 @@ def main(args):
         base_model.load(args.path)
 
     y_pred = base_model.predict(X_test)
-    y_pred = y_pred*100
+    y_pred = y_pred * 100
 
     ten_dist = N_distance(y_test, y_pred, 10)
     five_dist = N_distance(y_test, y_pred, 5)
