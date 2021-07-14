@@ -31,6 +31,12 @@ def create_parser():
     )
 
     parser.add_argument(
+        '--use_bert',
+        action='store_true',
+        help='Use bert pretrained model.'
+    )
+
+    parser.add_argument(
         '--clean_text',
         action='store_true',
         help='Remove links, mentions etc before training.'

@@ -9,19 +9,31 @@ class BasePipeline:
         self.regressor = regressor
 
     def fit(self, X: List[str], y: List[float]):
-        X_emb = self.embedder.fit(X)
+        if self.embedder is not None:
+            X_emb = self.embedder.fit(X)
+        else:
+            X_emb = X
 
         self.regressor.fit(X_emb, y)
 
     def predict(self, X: List[str]):
-        X_emb = self.embedder.encode(X)
+        if self.embedder is not None:
+            X_emb = self.embedder.encode(X)
+        else:
+            X_emb = X
+
         return self.regressor.predict(X_emb)
 
     def save(self, odir):
         os.makedirs(odir, exist_ok=True)
-        self.embedder.save(f'{odir}/{self.embedder.name}')
+
+        if self.embedder is not None:
+            self.embedder.save(f'{odir}/{self.embedder.name}')
+
         self.regressor.save(f'{odir}/{self.regressor.name}')
 
     def load(self, odir):
-        self.embedder.load(odir)
+        if self.embedder is not None:
+            self.embedder.load(odir)
+
         self.regressor.load(odir)

@@ -6,6 +6,7 @@ from models.arg_parser import create_parser
 # from models.bert_model import BertModel
 # from models.catboost_regr import CatboostRegr
 from models.neuralnet_multi import NeuralNetMulti
+from models.bertweet import BertWrapper
 from models.data_loader import DataLoader
 #from models.bert_data_loader import DataLoader
 from models.tfidf_model import TfidfModel
@@ -19,6 +20,7 @@ from models.scores import lengths
 from sklearn.model_selection import train_test_split
 import numpy as np
 
+
 # python3 base_pipeline_example.py --train --use_bpe --data_path data/300_inf_full_en.csv
 def main(args):
     dl = DataLoader()
@@ -30,7 +32,14 @@ def main(args):
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1, random_state=1)
     y_train = y_train / 100
 
-    base_model = BasePipeline(TfidfModel(args.use_bpe), NeuralNetMulti())
+    if args.use_bert:
+        embedder = None
+        regressor = BertWrapper()
+    else:
+        embedder = TfidfModel(args.use_bpe)
+        regressor = NeuralNetMulti()
+
+    base_model = BasePipeline(embedder, regressor)
 
     if args.train:
         base_model.fit(X_train, y_train)
