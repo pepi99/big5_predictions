@@ -116,7 +116,7 @@ class BertWrapper:
 
             sequences = self._get_tokenized_sequences(x)
 
-            if self.args.save_tokenized_path is not None:
+            if self.args.save_tokenized_path is not None and training:
                 # Saving tokenized sequences
                 with open(self.args.save_tokenized_path, "wb") as fp:
                     pickle.dump(sequences, fp)
