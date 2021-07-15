@@ -50,13 +50,9 @@ def main(args):
         base_model.save(args.model_path)
     else:
         base_model.load(args.model_path)
-    print(len(X_test))
-    print('-')
+
     y_pred = base_model.predict(X_test)
-    y_pred = y_pred * 100
-    print(y_pred)
-    print('='*30)
-    print(y_test)
+    y_pred = (y_pred * 100).astype(int)
     ten_dist = N_distance(y_test, y_pred, 10)
     five_dist = N_distance(y_test, y_pred, 5)
 

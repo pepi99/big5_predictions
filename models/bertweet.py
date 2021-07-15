@@ -23,7 +23,7 @@ class BertWrapper:
         self.name = pretrained_model.split('/')[-1]
         self.model = t.AutoModelForSequenceClassification.from_pretrained(
             pretrained_model, num_labels=5).to(self.device)
-        self.optimizer = torch.optim.Adam(self.model.parameters(), lr=1e-4)
+        self.optimizer = torch.optim.Adam(self.model.parameters(), lr=1e-5)
         self.criterion = nn.MSELoss()
         self.max_len = args.max_len
 
@@ -89,6 +89,8 @@ class BertWrapper:
                         print("Saving best mdoel weights...")
                         self.best_model_path = 'cache/{}'.format(self.name)
                         self.save(self.best_model_path)
+
+                        best_val_loss = final_loss
 
     def predict(self, x_test):
         x = self._get_subtexts(x_test, training=False)
