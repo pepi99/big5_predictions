@@ -61,20 +61,26 @@ def create_parser():
     parser.add_argument(
         '--batch_size',
         type=int,
-        default='16'
+        default=16
+    )
+
+    parser.add_argument(
+        '--subbatch_size',
+        type=int,
+        default=32
     )
 
     parser.add_argument(
         '--max_len',
         type=int,
-        default='128',
+        default=128,
         help='Maximum length for input sequences.'
     )
 
     parser.add_argument(
         '--epochs',
         type=int,
-        default='10',
+        default=10,
     )
 
     return parser

@@ -127,10 +127,17 @@ class BertWrapper:
 
         return x
 
-    def _get_prediction(self, x_batch):
+    def _get_prediction(self, x_batch, training=True):
         predictions = []
 
         for sample in x_batch:
+            if training:
+                subbatch_size = min(sample.shape[0], self.args.subbatch_size)
+                sample_indexes = np.random.choice(np.arange(subbatch_size), size=subbatch_size, replace=False)
+                subbatch = sample[sample_indexes]
+
+                sample = subbatch
+
             current_prediction = self.model(sample.to(self.device), return_dict=True)['logits']
             predictions.append(current_prediction.mean(axis=0))
 
