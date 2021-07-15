@@ -62,6 +62,7 @@ class BertWrapper:
                 pbar.set_description(
                     f"Epoch {epoch} of {self.epochs}: loss {loss.item():.4f}"
                 )
+                wandb.log({"Train loss": loss.item()})
 
                 if idx % self.validation_steps == 0:
                     # Validation
@@ -81,6 +82,7 @@ class BertWrapper:
 
                     final_loss = sum(val_loss) / len(val_loss)
                     print("Validation loss:", final_loss)
+                    wandb.log({"Validation loss": final_loss})
 
                     if final_loss < best_val_loss:
                         print("Saving best mdoel weights...")

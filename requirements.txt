@@ -16,3 +16,4 @@ tensorflow==2.5.0
 torchvision==0.9.1
 langdetect
 transformers
+wandb

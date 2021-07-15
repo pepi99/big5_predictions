@@ -5,7 +5,7 @@ from models.base_pipeline import BasePipeline
 from models.arg_parser import create_parser
 # from models.bert_model import BertModel
 # from models.catboost_regr import CatboostRegr
-from models.neuralnet_multi import NeuralNetMulti
+# from models.neuralnet_multi import NeuralNetMulti
 from models.bertweet import BertWrapper
 from models.data_loader import DataLoader
 #from models.bert_data_loader import DataLoader
@@ -19,10 +19,14 @@ from models.scores import lengths
 
 from sklearn.model_selection import train_test_split
 import numpy as np
+import wandb
 
 
 # python3 base_pipeline_example.py --train --use_bpe --data_path data/300_inf_full_en.csv
 def main(args):
+    wandb.init(project='big5', entity='zemerov')
+    wandb.config.batch_size = args.batch_size
+
     dl = DataLoader()
     print('Loading data...')
     X, y = dl.parse_input(args.data_path, clean_text=args.clean_text)
@@ -37,7 +41,7 @@ def main(args):
         regressor = BertWrapper(batch_size=args.batch_size, num_epochs=args.epochs)
     else:
         embedder = TfidfModel(args.use_bpe)
-        regressor = NeuralNetMulti()
+        #regressor = NeuralNetMulti()
 
     base_model = BasePipeline(embedder, regressor)
 
@@ -61,6 +65,7 @@ def main(args):
     print('Shape of prediction set size: ', y_test.shape)
     print('10_distance: ', ten_dist)
     print('10_distance%: ', percentage(ten_dist, y_test.shape[0]))
+    wandb.log({"10 distance": percentage(ten_dist, y_test.shape[0])})
     print('5_distance: ', five_dist)
     print('5_distance%: ', percentage(five_dist, y_test.shape[0]))
     print('rmse: ', _rmse)
