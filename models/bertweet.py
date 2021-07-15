@@ -27,7 +27,7 @@ class BertWrapper:
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=1e-4)
         self.criterion = nn.MSELoss()
 
-        self.tokenizer = t.AutoTokenizer.from_pretrained(pretrained_model) #, use_fast=True)
+        self.tokenizer = t.AutoTokenizer.from_pretrained(pretrained_model, use_fast=True)
 
         self.batch_size = batch_size
         self.epochs = num_epochs
