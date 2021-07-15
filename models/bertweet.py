@@ -31,7 +31,7 @@ class BertWrapper:
 
         self.batch_size = batch_size
         self.epochs = num_epochs
-        self.validation_steps = 200
+        self.validation_steps = 400
         self.best_model_path = None
         self.args = args
 
@@ -65,7 +65,7 @@ class BertWrapper:
                 )
                 wandb.log({"Train loss": loss.item()})
 
-                if idx % self.validation_steps == 0:
+                if idx % (self.validation_steps * self.batch_size) == 0:
                     # Validation
                     val_loss = []
                     with torch.no_grad():
