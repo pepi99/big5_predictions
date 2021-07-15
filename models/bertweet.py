@@ -17,7 +17,7 @@ class BertWrapper:
             num_epochs=10,
             args=None
     ):
-        pretrained_model = 'prajjwal1/bert-tiny'
+        #pretrained_model = 'prajjwal1/bert-tiny'
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
         self.name = pretrained_model.split('/')[-1]
@@ -114,34 +114,16 @@ class BertWrapper:
         else:
             # Tokenize training set from scratch
 
-            sequences = []
-            for idx in tqdm.tqdm(range(x.shape[0]), desc='Text tokenization'):
-                tokenized = self.tokenizer(x[idx], return_tensors='pt')
-
-                input_ids = tokenized['input_ids']
-
-                sequences.append(input_ids)
+            sequences = self._get_tokenized_sequences(x)
 
             if self.args.save_tokenized_path is not None:
-                path = "cache/tokenized"
-
-                with open(path, "wb") as fp:  # Pickling
+                # Saving tokenized sequences
+                with open(self.args.save_tokenized_path, "wb") as fp:
                     pickle.dump(sequences, fp)
 
-                print("Tokenized sequence was saved to", path)
+                print("Tokenized sequences was saved to", self.args.save_tokenized_path)
 
-        new_x = []
-        for input_ids in sequences:
-            # reshape sequences to final batches
-            num_elements = input_ids.shape[1] // self.max_len
-
-            new_x.append(
-                input_ids[0, :input_ids.shape[1] - input_ids.shape[1] % self.max_len].reshape(
-                    (num_elements, self.max_len)
-                )
-            )
-
-        x = new_x
+        x = self._get_reshaped_sequences(sequences)
 
         return x
 
@@ -155,3 +137,30 @@ class BertWrapper:
         predictions = torch.stack(predictions)
 
         return predictions
+
+    def _get_reshaped_sequences(self, sequences):
+        new_x = []
+
+        for input_ids in sequences:
+            # reshape sequences to final batches
+            num_elements = input_ids.shape[1] // self.max_len
+
+            new_x.append(
+                input_ids[0, :input_ids.shape[1] - input_ids.shape[1] % self.max_len].reshape(
+                    (num_elements, self.max_len)
+                )
+            )
+
+        return new_x
+
+    def _get_tokenized_sequences(self, x):
+        sequences = []
+
+        for idx in tqdm.tqdm(range(x.shape[0]), desc='Text tokenization'):
+            tokenized = self.tokenizer(x[idx], return_tensors='pt')
+
+            input_ids = tokenized['input_ids']
+
+            sequences.append(input_ids)
+
+        return sequences
