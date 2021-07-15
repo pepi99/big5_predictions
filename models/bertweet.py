@@ -12,19 +12,26 @@ MAX_SEQ_LEN = 128
 
 
 class BertWrapper:
-    def __init__(self, pretrained_model="vinai/bertweet-base", device='cpu'):
+    def __init__(
+            self,
+            pretrained_model="vinai/bertweet-base",
+            batch_size=32,
+            num_epochs=10
+    ):
         #pretrained_model = 'prajjwal1/bert-tiny'
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
         self.name = pretrained_model.split('/')[-1]
-        self.model = t.AutoModelForSequenceClassification.from_pretrained(pretrained_model, num_labels=5).to(device)
+        self.model = t.AutoModelForSequenceClassification.from_pretrained(
+            pretrained_model, num_labels=5).to(self.device)
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=1e-4)
         self.criterion = nn.MSELoss()
 
-        self.tokenizer = t.AutoTokenizer.from_pretrained(pretrained_model, use_fast=True)
-        self.device = device
+        self.tokenizer = t.AutoTokenizer.from_pretrained(pretrained_model) #, use_fast=True)
 
-        self.batch_size = 3 #128
-        self.epochs = 1
-        self.validation_steps = 20
+        self.batch_size = batch_size
+        self.epochs = num_epochs
+        self.validation_steps = 200
         self.best_model_path = None
 
     def fit(self, x, y):

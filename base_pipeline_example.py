@@ -34,7 +34,7 @@ def main(args):
 
     if args.use_bert:
         embedder = None
-        regressor = BertWrapper()
+        regressor = BertWrapper(batch_size=args.batch_size, num_epochs=args.epochs)
     else:
         embedder = TfidfModel(args.use_bpe)
         regressor = NeuralNetMulti()

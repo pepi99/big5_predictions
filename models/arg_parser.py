@@ -41,4 +41,19 @@ def create_parser():
         action='store_true',
         help='Remove links, mentions etc before training.'
     )
+
+    # =========== TRAINING ARGUMENTS ============
+
+    parser.add_argument(
+        '--batch_size',
+        type=int,
+        default='16'
+    )
+
+    parser.add_argument(
+        '--epochs',
+        type=int,
+        default='10',
+    )
+
     return parser
