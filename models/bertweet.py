@@ -94,7 +94,7 @@ class BertWrapper:
         x = self._get_subtexts(x_test, training=False)
 
         with torch.no_grad():
-            return self._get_prediction(x).numpy()
+            return self._get_prediction(x, training=False).cpu().numpy()
 
     def load(self, path):
         self.model = t.AutoModelForSequenceClassification.from_pretrained(path, num_labels=5).to(self.device)
