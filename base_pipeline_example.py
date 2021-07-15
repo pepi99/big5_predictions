@@ -38,7 +38,7 @@ def main(args):
 
     if args.use_bert:
         embedder = None
-        regressor = BertWrapper(batch_size=args.batch_size, num_epochs=args.epochs)
+        regressor = BertWrapper(batch_size=args.batch_size, num_epochs=args.epochs, args=args)
     else:
         embedder = TfidfModel(args.use_bpe)
         #regressor = NeuralNetMulti()
@@ -49,7 +49,7 @@ def main(args):
         base_model.fit(X_train, y_train)
         base_model.save(args.model_path)
     else:
-        base_model.load(args.path)
+        base_model.load(args.model_path)
 
     y_pred = base_model.predict(X_test)
     y_pred = y_pred * 100

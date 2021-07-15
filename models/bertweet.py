@@ -6,9 +6,7 @@ import tqdm
 from sklearn.model_selection import train_test_split
 import wandb
 import numpy as np
-
-
-MAX_SEQ_LEN = 128
+import pickle
 
 
 class BertWrapper:
@@ -16,9 +14,10 @@ class BertWrapper:
             self,
             pretrained_model="vinai/bertweet-base",
             batch_size=32,
-            num_epochs=10
+            num_epochs=10,
+            args=None
     ):
-        #pretrained_model = 'prajjwal1/bert-tiny'
+        pretrained_model = 'prajjwal1/bert-tiny'
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
         self.name = pretrained_model.split('/')[-1]
@@ -26,6 +25,7 @@ class BertWrapper:
             pretrained_model, num_labels=5).to(self.device)
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=1e-4)
         self.criterion = nn.MSELoss()
+        self.max_len = args.max_len
 
         self.tokenizer = t.AutoTokenizer.from_pretrained(pretrained_model, use_fast=True)
 
@@ -33,6 +33,7 @@ class BertWrapper:
         self.epochs = num_epochs
         self.validation_steps = 200
         self.best_model_path = None
+        self.args = args
 
     def fit(self, x, y):
         x = self._get_subtexts(x)
@@ -86,34 +87,57 @@ class BertWrapper:
 
                     if final_loss < best_val_loss:
                         print("Saving best mdoel weights...")
-                        self.best_model_path = 'cache/{}_{}.pt'.format(self.name, idx + epoch)
+                        self.best_model_path = 'cache/{}'.format(self.name)
                         self.save(self.best_model_path)
 
     def predict(self, x_test):
-        x = self._get_subtexts(x_test)
+        x = self._get_subtexts(x_test, training=False)
 
         with torch.no_grad():
             return self._get_prediction(x).numpy()
 
     def load(self, path):
         self.model = t.AutoModelForSequenceClassification.from_pretrained(path, num_labels=5).to(self.device)
-        print("Model saved to", path)
+        print("Model loaded from", path)
 
     def save(self, path):
         self.model.save_pretrained(path)
+        print("Model saved to", path)
 
-    def _get_subtexts(self, x):
+    def _get_subtexts(self, x, training=True):
+        if self.args.load_tokenized_path is not None and training:
+            # Loading pretokenized training set
+
+            with open(self.args.load_tokenized_path, "rb") as fp:
+                sequences = pickle.load(fp)
+                print("Load previously tokenized sentences")
+        else:
+            # Tokenize training set from scratch
+
+            sequences = []
+            for idx in tqdm.tqdm(range(x.shape[0]), desc='Text tokenization'):
+                tokenized = self.tokenizer(x[idx], return_tensors='pt')
+
+                input_ids = tokenized['input_ids']
+
+                sequences.append(input_ids)
+
+            if self.args.save_tokenized_path is not None:
+                path = "cache/tokenized"
+
+                with open(path, "wb") as fp:  # Pickling
+                    pickle.dump(sequences, fp)
+
+                print("Tokenized sequence was saved to", path)
+
         new_x = []
-
-        for idx in tqdm.tqdm(range(x.shape[0]), desc='Text tokenization'):
-            tokenized = self.tokenizer(x[idx], return_tensors='pt')
-
-            elem = tokenized['input_ids']
-            num_elements = elem.shape[1] // MAX_SEQ_LEN
+        for input_ids in sequences:
+            # reshape sequences to final batches
+            num_elements = input_ids.shape[1] // self.max_len
 
             new_x.append(
-                elem[0, :elem.shape[1] - elem.shape[1] % MAX_SEQ_LEN].reshape(
-                    (num_elements, MAX_SEQ_LEN)
+                input_ids[0, :input_ids.shape[1] - input_ids.shape[1] % self.max_len].reshape(
+                    (num_elements, self.max_len)
                 )
             )
 

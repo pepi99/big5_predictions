@@ -42,12 +42,33 @@ def create_parser():
         help='Remove links, mentions etc before training.'
     )
 
+    parser.add_argument(
+        '--save_tokenized_path',
+        type=str,
+        default=None,
+        help='Save tokenized sequences.'
+    )
+
+    parser.add_argument(
+        '--load_tokenized_path',
+        type=str,
+        default=None,
+        help='Load tokenized sequence.'
+    )
+
     # =========== TRAINING ARGUMENTS ============
 
     parser.add_argument(
         '--batch_size',
         type=int,
         default='16'
+    )
+
+    parser.add_argument(
+        '--max_len',
+        type=int,
+        default='128',
+        help='Maximum length for input sequences.'
     )
 
     parser.add_argument(
