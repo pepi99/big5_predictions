@@ -14,7 +14,7 @@ def create_parser():
     parser.add_argument(
         '--model_path',
         type=str,
-        default='cache/tfidf_pca_nn_full',
+        default='cache/hf_model',
         help='Path to trained model.'
     )
 
@@ -31,9 +31,16 @@ def create_parser():
     )
 
     parser.add_argument(
-        '--use_bert',
+        '--pretrained_model',
+        type=str,
+        default='bertweet-base',
+        help='Name of the hugging face model.'
+    )
+
+    parser.add_argument(
+        '--long',
         action='store_true',
-        help='Use bert pretrained model.'
+        help='Use linear transformers.'
     )
 
     parser.add_argument(

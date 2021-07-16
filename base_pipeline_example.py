@@ -36,18 +36,12 @@ def main(args):
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1, random_state=1)
     y_train = y_train / 100
 
-    if args.use_bert:
-        embedder = None
-        regressor = BertWrapper(batch_size=args.batch_size, num_epochs=args.epochs, args=args)
-    else:
-        embedder = TfidfModel(args.use_bpe)
-        #regressor = NeuralNetMulti()
+    regressor = BertWrapper(batch_size=args.batch_size, num_epochs=args.epochs, args=args)
 
-    base_model = BasePipeline(embedder, regressor)
+    base_model = BasePipeline(None, regressor)
 
     if args.train:
         base_model.fit(X_train, y_train)
-        base_model.save(args.model_path)
     else:
         base_model.load(args.model_path)
 

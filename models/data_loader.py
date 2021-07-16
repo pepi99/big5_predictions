@@ -46,6 +46,7 @@ class DataLoader:
             df['input_text'] = df['input_text'].apply(lambda x: re.sub(r'&[a-z]+;', '', x))
             df['input_text'] = df['input_text'].apply(lambda x: re.sub(r"[^a-z\s\(\-:\)\\\/\];='#]", '', x))
             df['input_text'] = df['input_text'].apply(lambda x: re.sub(r'@mention', '', x))
+            df['input_text'] = df['input_text'].apply(lambda x: re.sub('#', '', x))
 
         y = df[['big5_openness', 'big5_conscientiousness', 'big5_extraversion', 'big5_agreeableness',
                 'big5_neuroticism']].to_numpy()

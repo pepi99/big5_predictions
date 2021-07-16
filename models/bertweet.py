@@ -12,11 +12,11 @@ import pickle
 class BertWrapper:
     def __init__(
             self,
-            pretrained_model="vinai/bertweet-base",
             batch_size=32,
             num_epochs=10,
             args=None
     ):
+        pretrained_model = args.pretrained_model
         #pretrained_model = 'prajjwal1/bert-tiny'
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -132,18 +132,21 @@ class BertWrapper:
     def _get_prediction(self, x_batch, training=True):
         predictions = []
 
-        for sample in x_batch:
-            if training:
-                subbatch_size = min(sample.shape[0], self.args.subbatch_size)
-                sample_indexes = np.random.choice(np.arange(subbatch_size), size=subbatch_size, replace=False)
-                subbatch = sample[sample_indexes]
+        if self.args.long:
+            predictions = self.model(x_batch)['logits']
+        else:
+            for sample in x_batch:
+                if training:
+                    subbatch_size = min(sample.shape[0], self.args.subbatch_size)
+                    sample_indexes = np.random.choice(np.arange(subbatch_size), size=subbatch_size, replace=False)
+                    subbatch = sample[sample_indexes]
 
-                sample = subbatch
+                    sample = subbatch
 
-            current_prediction = self.model(sample.to(self.device), return_dict=True)['logits']
-            predictions.append(current_prediction.mean(axis=0))
+                current_prediction = self.model(sample.to(self.device), return_dict=True)['logits']
+                predictions.append(current_prediction.mean(axis=0))
 
-        predictions = torch.stack(predictions)
+            predictions = torch.stack(predictions)
 
         return predictions
 
@@ -154,11 +157,17 @@ class BertWrapper:
             # reshape sequences to final batches
             num_elements = input_ids.shape[1] // self.max_len
 
-            new_x.append(
-                input_ids[0, :input_ids.shape[1] - input_ids.shape[1] % self.max_len].reshape(
-                    (num_elements, self.max_len)
+            if self.args.long:
+                new_x.append(input_ids[0, :self.max_len])
+            else:
+                new_x.append(
+                    input_ids[0, :input_ids.shape[1] - input_ids.shape[1] % self.max_len].reshape(
+                        (num_elements, self.max_len)
+                    )
                 )
-            )
+
+        if self.args.long:
+            new_x = torch.stack(new_x)
 
         return new_x
 
@@ -166,7 +175,9 @@ class BertWrapper:
         sequences = []
 
         for idx in tqdm.tqdm(range(x.shape[0]), desc='Text tokenization'):
-            tokenized = self.tokenizer(x[idx], return_tensors='pt')
+            tokenized = self.tokenizer(
+                x[idx], return_tensors='pt', padding='max_length', max_length=self.args.max_len
+            )
 
             input_ids = tokenized['input_ids']
 
