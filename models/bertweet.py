@@ -133,7 +133,7 @@ class BertWrapper:
         predictions = []
 
         if self.args.long:
-            predictions = self.model(x_batch)['logits']
+            predictions = self.model(x_batch.to(self.device))['logits']
         else:
             for sample in x_batch:
                 if training:
