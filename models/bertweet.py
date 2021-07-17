@@ -97,7 +97,7 @@ class BertWrapper:
         predictions = []
 
         with torch.no_grad():
-            for i in range(0, x.shape[0], self.batch_size):
+            for i in tqdm.tqdm(range(0, x.shape[0], self.batch_size), desc='Predicting values'):
                 predictions.append(self._get_prediction(x[i:i + self.batch_size], training=False).cpu().numpy())
 
         predictions = np.concatenate(predictions, axis=0)
