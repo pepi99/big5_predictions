@@ -94,9 +94,15 @@ class BertWrapper:
 
     def predict(self, x_test):
         x = self._get_subtexts(x_test, training=False)
+        predictions = []
 
         with torch.no_grad():
-            return self._get_prediction(x, training=False).cpu().numpy()
+            for i in range(0, x.shape[0], self.batch_size):
+                predictions.append(self._get_prediction(x[i:i + self.batch_size], training=False).cpu().numpy())
+
+        predictions = np.concatenate(predictions, axis=0)
+
+        return predictions
 
     def load(self, path):
         self.model = t.AutoModelForSequenceClassification.from_pretrained(path, num_labels=5).to(self.device)
