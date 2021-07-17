@@ -37,6 +37,12 @@ def create_parser():
     )
 
     parser.add_argument(
+        '--n_neighbours',
+        action='store_true',
+        help='Number of neighbours for KNN'
+    )
+
+    parser.add_argument(
         '--pretrained_model',
         type=str,
         default='bertweet-base',
