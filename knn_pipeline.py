@@ -51,7 +51,7 @@ def main(args):
     for k in [5, 10, 15, 20, 100]:
         print("Neighbours", k)
 
-        base_model.regressor = KNeighborsRegressor(n_jobs=-1).fit(base_model.X_train_emb, y_train)
+        base_model.regressor = KNeighborsRegressor(n_jobs=-1, n_neighbors=k).fit(base_model.X_train_emb, y_train)
 
         y_pred = base_model.predict(X_test)
         y_pred = (y_pred * 100).astype(int)
