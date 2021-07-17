@@ -37,9 +37,22 @@ def create_parser():
     )
 
     parser.add_argument(
+        '--normalize',
+        action='store_true',
+        help='Scale data.'
+    )
+
+    parser.add_argument(
         '--n_neighbours',
         action='store_true',
         help='Number of neighbours for KNN'
+    )
+
+    parser.add_argument(
+        '--max_tfidf',
+        type=int,
+        default=20000,
+        help='Number of features in KNN'
     )
 
     parser.add_argument(

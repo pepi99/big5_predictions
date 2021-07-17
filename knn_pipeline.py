@@ -41,7 +41,7 @@ def main(args):
     embedder = TfidfModel()
     regressor = KNeighborsRegressor(n_jobs=-1)
 
-    base_model = BasePipeline(embedder, regressor, normalize=True)
+    base_model = BasePipeline(embedder, regressor, normalize=args.normalize)
 
     if args.train:
         base_model.fit(X_train, y_train)

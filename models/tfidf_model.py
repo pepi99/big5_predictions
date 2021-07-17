@@ -17,22 +17,23 @@ class TfidfModel(Embedder, ABC):
     Tf-idf
     """
 
-    def __init__(self, use_bpe=False):
+    def __init__(self, use_bpe=False, max_features=20000):
         self.name = ''
         self.use_bpe = use_bpe
+        self.max_features = max_features
 
         if use_bpe:
             hf_tokenizer = t.AutoTokenizer.from_pretrained('roberta-base', use_fast=True)
             self.model = TfidfVectorizer(
                 lowercase=True,
-                max_features=20000,
+                max_features=max_features,
                 tokenizer=TokenizerWrapper(hf_tokenizer)
             )
         else:
-            self.model = TfidfVectorizer(lowercase=True, max_features=20000)
+            self.model = TfidfVectorizer(lowercase=True, max_features=max_features)
 
     def fit(self, X):
-        print('Fitting the tfidf vectorizer...')
+        print('Fitting the tfidf vectorizer with {} features...'.format(self.max_features))
 
         matrix = self.model.fit_transform(X).todense()
 
