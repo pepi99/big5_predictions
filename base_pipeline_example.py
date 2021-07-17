@@ -9,6 +9,7 @@ from models.arg_parser import create_parser
 from models.bertweet import BertWrapper
 from models.data_loader import DataLoader
 #from models.bert_data_loader import DataLoader
+from sklearn.neighbors import KNeighborsRegressor
 from models.tfidf_model import TfidfModel
 from models.scores import rmse
 from models.scores import N_distance
@@ -36,9 +37,15 @@ def main(args):
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1, random_state=1)
     y_train = y_train / 100
 
-    regressor = BertWrapper(batch_size=args.batch_size, num_epochs=args.epochs, args=args)
+    if args.use_knn:
+        print("Using KNN")
+        embedder = TfidfModel()
+        regressor = KNeighborsRegressor(n_jobs=-1)
+    else:
+        embedder = None
+        regressor = BertWrapper(batch_size=args.batch_size, num_epochs=args.epochs, args=args)
 
-    base_model = BasePipeline(None, regressor)
+    base_model = BasePipeline(embedder, regressor)
 
     if args.train:
         base_model.fit(X_train, y_train)

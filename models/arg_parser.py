@@ -31,6 +31,12 @@ def create_parser():
     )
 
     parser.add_argument(
+        '--use_knn',
+        action='store_true',
+        help='Use KNN for prediction'
+    )
+
+    parser.add_argument(
         '--pretrained_model',
         type=str,
         default='bertweet-base',
