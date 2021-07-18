@@ -17,6 +17,7 @@ from models.scores import percentage
 from models.scores import idxs
 from models.scores import average_words
 from models.scores import lengths
+from models.bert_model import BertModel
 
 from sklearn.model_selection import train_test_split
 import numpy as np
@@ -38,7 +39,7 @@ def main(args):
     y_train = y_train / 100
 
     print("Using KNN")
-    embedder = TfidfModel()
+    embedder = BertModel() #TfidfModel()
     regressor = KNeighborsRegressor(n_jobs=-1)
 
     base_model = BasePipeline(embedder, regressor, normalize=args.normalize)

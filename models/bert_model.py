@@ -2,7 +2,7 @@ from abc import ABC
 
 from sentence_transformers import SentenceTransformer
 
-from embedder import Embedder
+from .embedder import Embedder
 
 
 class BertModel(Embedder, ABC):
