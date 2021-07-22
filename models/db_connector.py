@@ -45,4 +45,28 @@ class Connector:
             self.connection.commit()
         self.cursor.close()
         self.connection.close()
-
+    def insert_analysis(self, ids, X, y_pred=False, non_english=False):
+        if non_english:
+            for id, xi in zip(ids, X):
+                id_int = int(id)
+                n_words = len(xi.split())
+                self.cursor.execute('INSERT INTO data_analysis (id, word_count, non_blank_English, is_used_for_test, big5_openness, big5_conscientiousness, big5_extraversion, big5_agreeableness, big5_neuroticism) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)',(id_int, n_words, '0', '0', -1, -1, -1, -1, -1))
+                self.connection.commit()
+        else:
+            if type(y_pred) != bool:
+                for id, xi, yi_pred in zip(ids, X, y_pred):
+                    id_int = int(id)
+                    n_words = len(xi.split())
+                    big5_openness_p = int(yi_pred[0])
+                    big5_conscientiousness_p = int(yi_pred[1])
+                    big5_extraversion_p = int(yi_pred[2])
+                    big5_agreeableness_p = int(yi_pred[3])
+                    big5_neuroticism_p = int(yi_pred[4])
+                    self.cursor.execute('INSERT INTO data_analysis (id, word_count, non_blank_english, is_used_for_test, big5_openness, big5_conscientiousness, big5_extraversion, big5_agreeableness, big5_neuroticism) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)',(id_int, n_words, '1', '1', big5_openness_p,big5_conscientiousness_p, big5_extraversion_p, big5_agreeableness_p, big5_neuroticism_p))
+                    self.connection.commit()
+            else:
+                for id, xi in zip(ids, X):
+                    id_int = int(id)
+                    n_words = len(xi.split())
+                    self.cursor.execute('INSERT INTO data_analysis (id, word_count, non_blank_English, is_used_for_test, big5_openness, big5_conscientiousness, big5_extraversion, big5_agreeableness, big5_neuroticism) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)',(id_int, n_words, '1', '0', -1, -1, -1, -1, -1))
+                    self.connection.commit()
