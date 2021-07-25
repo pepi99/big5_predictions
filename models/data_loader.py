@@ -23,30 +23,30 @@ class DataLoader:
         return lan
 
     def parse_input(self):
-        db_query = '''SELECT id, big5_openness, big5_conscientiousness, big5_extraversion, big5_agreeableness, big5_neuroticism, input_text  FROM data_personality_analiser_nlp where input_text IS NOT NULL and input_text <> '' '''
-        df = self.connector.query(db_query)
-        print('Shape of non-filtered df: ', df.shape)
-        print('Length filtering...')
-        df = df[df.input_text.progress_apply(lambda x: len(x.split()) in range(300, 100000))]
-        df['input_text'] = df['input_text'].apply(lambda text: ''.join(x for x in text if x.isprintable())) # Otherwise model can't read text
+        #db_query = '''SELECT id, big5_openness, big5_conscientiousness, big5_extraversion, big5_agreeableness, big5_neuroticism, input_text  FROM data_personality_analiser_nlp where input_text IS NOT NULL and input_text <> '' '''
+        #df = self.connector.query(db_query)
+        #print('Shape of non-filtered df: ', df.shape)
+        #print('Length filtering...')
+        #df = df[df.input_text.progress_apply(lambda x: len(x.split()) in range(300, 100000))]
+        #df['input_text'] = df['input_text'].apply(lambda text: ''.join(x for x in text if x.isprintable())) # Otherwise model can't read text
         #print('Filtering non-english...')
         #df = df[df.input_text.progress_apply(self.detect_bad).eq('en')]
         #print('Done!')
         #print('Shape of the DF: ', df.shape)
         #df.to_csv('../data/4K_5K_full_en.csv')
         #print('df saved!')
-        #df = pd.read_csv('../data/300_inf_full_en.csv')
+        df = pd.read_csv('../data/20K_100K_full_en.csv')
         print('Original english filtered df shape: ', df.shape)
-        print('Now saving non english texts for further use...')
-        df_non_english = df[df.input_text.apply(self.lanmodel.is_english).ne(True)]
-        print('Non english texts saved!')
-        print('Now additional filtering...')
-        df = df[df.input_text.apply(self.lanmodel.is_english)]
+        #print('Now saving non english texts for further use...')
+        #df_non_english = df[df.input_text.apply(self.lanmodel.is_english).ne(True)]
+        #print('Non english texts saved!')
+        #print('Now additional filtering...')
+        #df = df[df.input_text.apply(self.lanmodel.is_english)]
         print('Filtering finished!')
         print('New filtered non_english df shape: ', df.shape)
         print('Shape of the read df is: ', df.shape)
         #df_non_english = df[df.input_text.apply(detect).ne('en')]
-        self.insert_nonenglish(df_non_english)
+        #self.insert_nonenglish(df_non_english)
         #df['input_text'] = df['input_text'].str.lower()
         #df['input_text'] = df['input_text'].apply(lambda x: re.sub(r'https?:\/\/\S+', '', x))
         #df['input_text'] = df['input_text'].apply(lambda x: re.sub(r"www\.[a-z]?\.?(com)+|[a-z]+\.(com)", '', x))
@@ -56,7 +56,7 @@ class DataLoader:
         #df['input_text'] = df['input_text'].apply(lambda x: re.sub(r"[^a-z\s\(\-:\)\\\/\];='#]", '', x))
         #df['input_text'] = df['input_text'].apply(lambda x: re.sub(r'@mention', '', x))
 
-        y = df[['id', 'big5_openness', 'big5_conscientiousness', 'big5_extraversion', 'big5_agreeableness',
+        y = df[['big5_openness', 'big5_conscientiousness', 'big5_extraversion', 'big5_agreeableness',
                 'big5_neuroticism']].to_numpy()
     
         df = self.preprocess_df(df)

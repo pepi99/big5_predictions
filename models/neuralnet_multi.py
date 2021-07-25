@@ -2,9 +2,11 @@ from regressor import Regressor
 from sklearn.datasets import make_regression
 from sklearn.model_selection import RepeatedKFold
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense
+from tensorflow.keras.layers import Dense, Conv1D, Flatten, MaxPooling1D, Embedding
 from tensorflow.keras.layers import LSTM
+from tensorflow.keras.preprocessing.text import Tokenizer
 import tensorflow.keras
+from tensorflow.keras.preprocessing.sequence import pad_sequences
 from tensorflow.keras import callbacks
 from losses import huber_loss
 import tensorflow as tf
@@ -12,28 +14,45 @@ import matplotlib.pyplot as plt
 
 print(tf.__version__)
 print(tf.config.list_physical_devices())
-
+physical_devices = tf.config.list_physical_devices('GPU')
+tf.config.experimental.set_memory_growth(physical_devices[0], True)
 
 class NeuralNetMulti(Regressor):
     def __init__(self):
         self.name = 'keras-sequential'
         self.model = Sequential()
+        self.tokenizer = Tokenizer()
         # self.earlystopping = callbacks.EarlyStopping(monitor="mae",
         #                                              mode="min", patience=5,
         #                                              restore_best_weights=True)
 
     def fit(self, X, y):
         print('Fitting into the neural net...')
-        n_inputs = X.shape[1]
+        #n_inputs = X.shape[1]
         n_outputs = y.shape[1]
-        self.model.add(Dense(1024, input_dim=n_inputs, kernel_initializer='he_uniform', activation='relu'))
-        self.model.add(Dense(512, activation='relu'))
-        self.model.add(Dense(256, activation='relu'))
-        self.model.add(Dense(128, activation='relu'))
-        self.model.add(Dense(n_outputs, activation='sigmoid'))
+        self.tokenizer.fit_on_texts(X)
+        encoded_docs = self.tokenizer.texts_to_sequences(X)
+        max_length = max([len(s.split()) for s in X])
+        self.max_length = max_length
+        X_train = pad_sequences(encoded_docs, maxlen=max_length, padding='post')
+        vocab_size = len(self.tokenizer.word_index) + 1
+
+        self.model.add(Embedding(vocab_size, 500, input_length=max_length))
+        self.model.add(Conv1D(filters=32, kernel_size=8, activation='relu'))
+        self.model.add(MaxPooling1D(pool_size=2))
+        self.model.add(Flatten())
+        self.model.add(Dense(200, activation='relu'))
+        self.model.add(Dense(100, activation='relu'))
+        self.model.add(Dense(n_outputs))
+
+        #self.model.add(Dense(1024, input_dim=n_inputs, kernel_initializer='he_uniform', activation='relu'))
+        #self.model.add(Dense(512, activation='relu'))
+        #self.model.add(Dense(256, activation='relu'))
+        #self.model.add(Dense(128, activation='relu'))
+        #self.model.add(Dense(n_outputs, activation='sigmoid'))
         self.model.summary()
         self.model.compile(loss='mse', optimizer='adam', metrics=['mse', 'mae'])
-        history = self.model.fit(X, y, verbose=1, epochs=100, validation_split=0.1)
+        history = self.model.fit(X_train, y, verbose=1, epochs=20, validation_split=0.1, batch_size=16)
         # self.model.fit(X, y, verbose=1, epochs=1000, callbacks=[self.earlystopping])
         # MSE
         plt.plot(history.history['mse'])
@@ -56,7 +75,9 @@ class NeuralNetMulti(Regressor):
 
     def predict(self, X):
         print('Predicting...')
-        predictions = self.model.predict(X, verbose=1)
+        encoded_docs = self.tokenizer.texts_to_sequences(X)
+        X_test = pad_sequences(encoded_docs, maxlen=self.max_length, padding='post')
+        predictions = self.model.predict(X_test, verbose=1)
         print('Predicted!')
         return predictions
 
