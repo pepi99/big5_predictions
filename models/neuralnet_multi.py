@@ -2,8 +2,7 @@ from regressor import Regressor
 from sklearn.datasets import make_regression
 from sklearn.model_selection import RepeatedKFold
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense
-from tensorflow.keras.layers import LSTM
+from tensorflow.keras.layers import Dense, Conv1D, Flatten, MaxPooling1D
 import tensorflow.keras
 from tensorflow.keras import callbacks
 from losses import huber_loss
@@ -26,14 +25,23 @@ class NeuralNetMulti(Regressor):
         print('Fitting into the neural net...')
         n_inputs = X.shape[1]
         n_outputs = y.shape[1]
-        self.model.add(Dense(1024, input_dim=n_inputs, kernel_initializer='he_uniform', activation='relu'))
-        self.model.add(Dense(512, activation='relu'))
+        X_train = X.reshape(X.shape[0], X.shape[1], 1)
+
+        self.model.add(Conv1D(filters=32, kernel_size=8, activation='relu', input_shape=(20000, 1)))
+        self.model.add(MaxPooling1D(pool_size=2))
+        self.model.add(Conv1D(filters=16, kernel_size=4, activation='relu'))
+        self.model.add(MaxPooling1D(pool_size=2))
+        self.model.add(Conv1D(filters=8, kernel_size=4, activation='relu'))
+        self.model.add(MaxPooling1D(pool_size=2))
+        self.model.add(Flatten())
+        #self.model.add(Dense(1024, input_dim=n_inputs, kernel_initializer='he_uniform', activation='relu'))
+        #self.model.add(Dense(512, activation='relu'))
         self.model.add(Dense(256, activation='relu'))
         self.model.add(Dense(128, activation='relu'))
         self.model.add(Dense(n_outputs, activation='sigmoid'))
         self.model.summary()
         self.model.compile(loss='mse', optimizer='adam', metrics=['mse', 'mae'])
-        history = self.model.fit(X, y, verbose=1, epochs=100, validation_split=0.1)
+        history = self.model.fit(X_train, y, verbose=1, epochs=20, validation_split=0.1)
         # self.model.fit(X, y, verbose=1, epochs=1000, callbacks=[self.earlystopping])
         # MSE
         plt.plot(history.history['mse'])
@@ -56,7 +64,8 @@ class NeuralNetMulti(Regressor):
 
     def predict(self, X):
         print('Predicting...')
-        predictions = self.model.predict(X, verbose=1)
+        X_test = X.reshape(X.shape[0], X.shape[1], 1)
+        predictions = self.model.predict(X_test, verbose=1)
         print('Predicted!')
         return predictions
 

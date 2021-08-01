@@ -25,12 +25,12 @@ def main():
     print('Lengths are: ', lengths(X))
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1, random_state=1)
     y_train = y_train/100
-    train_ids = y_train[:, 0]
-    test_ids = y_test[:, 0]
+    #train_ids = y_train[:, 0]
+    #test_ids = y_test[:, 0]
 
-    y_test = y_test[:, 1:]
-    y_train = y_train[:, 1:]
-    dl.connector.insert_analysis(ids=train_ids, X=X_train)
+    #y_test = y_test[:, 1:]
+    #y_train = y_train[:, 1:]
+    #dl.connector.insert_analysis(ids=train_ids, X=X_train)
 
     base_model = Basepipeline(TfidfModel, NeuralNetMulti)
     base_model.fit(X_train, y_train)
@@ -38,7 +38,7 @@ def main():
     #base_model.load('../cache/tfidf_pca_nn_full')
     y_pred = base_model.predict(X_test)
     y_pred = y_pred*100
-    dl.connector.insert_analysis(ids=test_ids, X=X_test, y_pred=y_pred)
+    #dl.connector.insert_analysis(ids=test_ids, X=X_test, y_pred=y_pred)
     ten_dist = N_distance(y_test, y_pred, 10)
     five_dist = N_distance(y_test, y_pred, 5)
     _rmse = rmse(y_test, y_pred)

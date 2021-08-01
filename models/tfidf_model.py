@@ -21,38 +21,39 @@ class TfidfModel(Embedder, ABC):
     def __init__(self):
         self.name = ''
         self.model = TfidfVectorizer(lowercase=True, max_features=20000)
-        self.pca = PCA(n_components=9000)
+        #self.pca = PCA(n_components=9000)
 
     def fit(self, X):
         #print('Tokenizing training data...')
         #tokenized_text = self.tokenize_text(X)
         #print('Tokenizing training data finished!')
         print('Fitting the tfidf vectorizer...')
-        matrix = self.model.fit_transform(X).todense()
-        print('Fitting the tfidf vectorizer finished!')
-        matrix = np.squeeze(np.asarray(matrix))
+        matrix = self.model.fit_transform(X)
+        #print('Fitting the tfidf vectorizer finished!')
+        #matrix = np.squeeze(np.asarray(matrix))
         print('Dimension of original tfidf matrix: ', matrix.shape)
         
-        print('Fit transforming the PCA on the training data...')
-        self.pca.fit(matrix)
-        reduced_matrix = self.pca.transform(matrix)
+        #print('Fit transforming the PCA on the training data...')
+        #self.pca.fit(matrix)
+        #reduced_matrix = self.pca.transform(matrix)
         print('Fit transforming of the PCA training data finished!')
-        print('Dimension of reduced matrix: ', reduced_matrix.shape)
-        print('Encoder fitting completed!')
-        return reduced_matrix
+        #print('Dimension of reduced matrix: ', reduced_matrix.shape)
+        #print('Encoder fitting completed!')
+        return matrix.toarray()
+
 
     def encode(self, X):
         #print('Tokenizing test data...')
         #tokenized_text = self.tokenize_text(X)
         #print('Tokenizing test data finished!')
         print('TfIdf transforming test data...')
-        matrix = self.model.transform(X).todense()
-        print('TfIdf transform finished!')
-        matrix = np.squeeze(np.asarray(matrix))
-        print('PCA transforming test data...')
-        reduced_matrix = self.pca.transform(matrix)
-        print('PCA transformign finsihed!')
-        return reduced_matrix
+        matrix = self.model.transform(X)
+        #print('TfIdf transform finished!')
+        #matrix = np.squeeze(np.asarray(matrix))
+        #print('PCA transforming test data...')
+        #reduced_matrix = self.pca.transform(matrix)
+        #print('PCA transformign finsihed!')
+        return matrix.toarray()
 
     def load(self, path):
         print('Loading pca and tfidf models...')
