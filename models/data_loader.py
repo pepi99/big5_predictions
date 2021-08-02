@@ -23,11 +23,11 @@ class DataLoader:
         return lan
 
     def parse_input(self):
-        db_query = '''SELECT id, big5_openness, big5_conscientiousness, big5_extraversion, big5_agreeableness, big5_neuroticism, input_text  FROM data_personality_analiser_nlp where input_text IS NOT NULL and input_text <> '' limit 20000 '''
+        db_query = '''SELECT id, big5_openness, big5_conscientiousness, big5_extraversion, big5_agreeableness, big5_neuroticism, input_text  FROM data_personality_analiser_nlp where input_text IS NOT NULL and input_text <> '' '''
         df = self.connector.query(db_query)
         print('Shape of non-filtered df: ', df.shape)
         print('Length filtering...')
-        df = df[df.input_text.progress_apply(lambda x: len(x.split()) in range(300, 5000))]
+        df = df[df.input_text.progress_apply(lambda x: len(x.split()) in range(300, 150000))]
         df['input_text'] = df['input_text'].apply(lambda text: ''.join(x for x in text if x.isprintable())) # Otherwise model can't read text
         #print('Filtering out non-english...')
         #df = df[df.input_text.progress_apply(self.detect_bad).eq('en')]
