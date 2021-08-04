@@ -43,11 +43,11 @@ class DataLoader:
         print('Now saving English texts for analysis...')
         df = df[df.input_text.apply(self.lanmodel.is_english)]
         print('Filtering finished!')
-        print('New filtered non_english df shape: ', df.shape)
+        print('New filtered english df shape: ', df.shape)
         #df.to_csv('../data/300_10K_full_en_new.csv')
         #print('Dataframe saved!')
         #df_non_english = df[df.input_text.apply(detect).ne('en')]
-        self.insert_nonenglish(df_non_english)
+        #self.insert_nonenglish(df_non_english)
         #df['input_text'] = df['input_text'].str.lower()
         #df['input_text'] = df['input_text'].apply(lambda x: re.sub(r'https?:\/\/\S+', '', x))
         #df['input_text'] = df['input_text'].apply(lambda x: re.sub(r"www\.[a-z]?\.?(com)+|[a-z]+\.(com)", '', x))
