@@ -30,15 +30,16 @@ def main():
 
     y_test = y_test[:, 1:]
     y_train = y_train[:, 1:]
-    #dl.connector.insert_analysis(ids=train_ids, X=X_train)
+    dl.connector.insert_analysis(ids=train_ids, X=X_train)
 
     base_model = Basepipeline(TfidfModel, NeuralNetMulti)
     base_model.fit(X_train, y_train)
-    base_model.save('../cache/tfidf_pca_nn_300_inf_full_en_new')
+    base_model.save('../cache/model_v2')
     #base_model.load('../cache/tfidf_pca_nn_full')
     y_pred = base_model.predict(X_test)
     y_pred = y_pred*100
-    #dl.connector.insert_analysis(ids=test_ids, X=X_test, y_pred=y_pred)
+    y_pred = np.rint(y_pred).astype(int).tolist()
+    dl.connector.insert_analysis(ids=test_ids, X=X_test, y_pred=y_pred)
     ten_dist = N_distance(y_test, y_pred, 10)
     five_dist = N_distance(y_test, y_pred, 5)
     _rmse = rmse(y_test, y_pred)
@@ -53,7 +54,7 @@ def main():
     print('rmse: ', _rmse)
     print('average words in error: ', average_words(X_test, indices))
     print('Average words in correctly classified texts: ', average_words(X_test, list(set(all_indices) - set(indices))))
-    #dl.connector.insert(X_test, y_test, y_pred)
+    dl.connector.insert(X_test, y_test, y_pred)
 
 
 if __name__ == '__main__':
