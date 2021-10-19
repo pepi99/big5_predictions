@@ -24,8 +24,7 @@ class DataLoader:
 
     def parse_input(self):
         #db_query = '''SELECT id, big5_openness, big5_conscientiousness, big5_extraversion, big5_agreeableness, big5_neuroticism, input_text  FROM data_personality_analiser_nlp where input_text IS NOT NULL and input_text <> '' '''
-        db_query = '''SELECT id, big5_openness, big5_conscientiousness, big5_extraversion, big5_agreeableness, big5_neuroticism, input_text  FROM data_personality_analiser_nlp where input_text IS NOT NULL and input_text <> '' UNION ALL (SELECT id, big5_openness, big5_conscientiousness, big5_extraversion, big5_agreeableness, big5_neuroticism, input_text  FROM aaa_new_data_set where input_text IS NOT NULL and input_text <> '')
- '''
+        db_query = '''SELECT id, big5_openness, big5_conscientiousness, big5_extraversion, big5_agreeableness, big5_neuroticism, input_text  FROM aaa_new_data_set where input_text IS NOT NULL and input_text <> '' '''
         df = self.connector.query(db_query)
         print('Shape of non-filtered df: ', df.shape)
         print('Length filtering...')
@@ -51,7 +50,7 @@ class DataLoader:
         #df_non_english = df[df.input_text.apply(detect).ne('en')]
 
 
-        self.insert_nonenglish(df_non_english) 
+        #self.insert_nonenglish(df_non_english) 
 
 
         #df['input_text'] = df['input_text'].str.lower()
